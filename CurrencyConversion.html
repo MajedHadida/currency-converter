@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .main{
+            padding: 270px;
+            border: 3px solid pink;
+        }
+
+        .convertButton {
+            background-color:darkcyan;
+            border: 1px solid black;
+            color: black;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 1px 2px;
+            cursor: pointer;
+        }
+
+        .result{
+            border: 1px solid black;
+            padding: 15px 32px;
+            display: inline-block;
+            font-size: large;
+            margin: 1px;
+        }
+
+        .qnote{
+            margin: 0px;
+            font-size: small;
+            font-style: italic;
+        }
+
+        .abList{
+            font-size: large;
+            background-color: lightseagreen;
+            padding: 8px;
+            text-decoration: none;
+            border: 1px solid black;
+        }
+        
+    </style>
+</head>
+
+<body style="text-align: center;">
+    <div class = "main"> 
+        <h1><i><big>C</big></i>urrency <i><big>C</big></i>onverter</h1>
+        $
+        <input type="number" id="amount" placeholder="Enter amount to convert">
+        <br>
+        <br>
+        <!--
+            HUGE credits to https://www.11zon.com/zon/html/html-input-text-only-letters-and-space.php for helping me figure out how to make input text accept only text
+            Thank you!
+        -->
+        <input id=from placeholder="e.g. USD" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)">
+        to
+        <input id=to placeholder="e.g. CAD" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)">
+        <p class = "qnote">Please make sure you type in all CAPS</p>
+        <p>
+            <button class="convertButton" onclick="document.getElementById('result').innerHTML = httpGet()" size = "100">
+                Convert
+            </button>
+        </p>
+        <p id = "result" class = result>This much is worth...</p>
+        <p><a href="https://www.easymarkets.com/int/en-ca/learn-centre/discover-trading/currency-acronyms-and-abbreviations/" class = "abList" target = _blank>
+            Country Abbreviation List
+        </a></p>
+        All credit for abbreviation list belongs to easyMarkets, for more information about them. Please check out their site.
+    </div>
+    
+
+
+    <script>
+        function httpGet(){
+            let fromCurrency = document.getElementById("from").value;
+            let toCurrency = document.getElementById("to").value;
+            var fullCurrency = fromCurrency+'_'+toCurrency;
+            // replace "KEYGOESHERE" with the API key (I took mine out incase I am not allowed to display it publicly)
+            let theUrl = "https://free.currconv.com/api/v7/convert?q="+ fromCurrency + "_" + toCurrency+"&compact=ultra&apiKey=KEYGOESHERE";
+            if(document.getElementById("amount").value == ''){
+                return "Please enter a valid number!";
+            }else if (parseFloat(document.getElementById("amount").value) <= 0){
+                return "Please enter a number higher than 0."
+            }
+
+            if(fromCurrency == '' || toCurrency == ''){
+                return "Please enter a valid country abbreviation!";
+            }
+
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", theUrl, false);
+            xmlHttp.send();
+            let result = (parseFloat(JSON.parse(xmlHttp.responseText)[fullCurrency])*(parseFloat(amount.value))).toFixed(2);
+            if (result == "NaN"){
+                return "Please enter a valid country abbreviation!";
+            }
+            return document.getElementById("amount").value+" in "+document.getElementById("from").value+" is "+result+" in " +document.getElementById("to").value;
+        }
+
+    </script>
+
+
+
+</body>
+
+
+</html>
